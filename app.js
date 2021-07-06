@@ -7,7 +7,6 @@ const express = require("express");
 const app = express();
 const sanitizeHTML = require("sanitize-html");
 const jwt = require("jsonwebtoken");
-const moesif = require('moesif-browser-js');
 const moesifExpress = require('moesif-express');
 
 app.use(express.urlencoded({ extended: false }));
@@ -25,8 +24,9 @@ var options = {
     return undefined;
   },
 
-   identifyCompany: function (req, res) {
-      return req.headers['X-Organization-Id'],
+  identifyCompany: function (req, res) {
+    return req.headers['X-Organization-Id'];
+  },
 
   getSessionToken: function (req, res) {
     return req.headers['Authorization'];
@@ -34,35 +34,6 @@ var options = {
 };
 
 app.use(moesifExpress(options));
-
-const moesifMiddleware = moesif({
-  applicationId: process.env.MOESIF_APPLICATION_ID,
-});
-
-const user = {
-  userId: '12345',
-  companyId: '67890', // If set, associate user with a company object
-  campaign: {
-    utmSource: 'google',
-    utmMedium: 'cpc', 
-    utmCampaign: 'adwords',
-    utmTerm: 'api+tooling',
-    utmContent: 'landing'
-  },
-  metadata: {
-    email: 'john@acmeinc.com',
-    firstName: 'John',
-    lastName: 'Doe',
-    title: 'Software Engineer',
-    salesInfo: {
-        stage: 'Customer',
-        lifetimeValue: 24000,
-        accountOwner: 'mary@contoso.com'
-    }
-  }
-};
-
-moesifMiddleware.updateUser(user, callback);
 /* MOESIF INIT - END */
 
 app.use("/", require("./router"));
