@@ -14,23 +14,18 @@ app.use(express.urlencoded({ extended: false }));
 app.use(express.json());
 
 /* MOESIF INIT - START */
-var options = {
-
+const moesifMiddleware = moesif({
   applicationId: process.env.MOESIF_APPLICATION_ID,
 
+  // Optional hook to link API calls to users
   identifyUser: function (req, res) {
-    if (req.user) {
-      return req.user.id;
-    }
-    return undefined;
+    return req.user ? req.user.id : undefined;
   },
+});
 
-  getSessionToken: function (req, res) {
-    return req.headers['Authorization'];
-  }
-};
-
-app.use(moesifExpress(options));
+// 3. Enable the Moesif middleware to start logging incoming API Calls
+moesifMiddleware.startCaptureOutgoing();
+app.use(moesifMiddleware);
 /* MOESIF INIT - END */
 
 app.use("/", require("./router"));
