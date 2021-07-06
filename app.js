@@ -1,3 +1,5 @@
+const dotenv = require("dotenv").config()
+
 const Sentry = require("@sentry/node");
 const Tracing = require("@sentry/tracing");
 
@@ -5,9 +7,31 @@ const express = require("express");
 const app = express();
 const sanitizeHTML = require("sanitize-html");
 const jwt = require("jsonwebtoken");
+const moesif = require('moesif-nodejs');
+const moesifExpress = require('moesif-express');
 
 app.use(express.urlencoded({ extended: false }));
 app.use(express.json());
+
+/* MOESIF INIT - START */
+var options = {
+
+  applicationId: process.env.MOESIF_APPLICATION_ID,
+
+  identifyUser: function (req, res) {
+    if (req.user) {
+      return req.user.id;
+    }
+    return undefined;
+  },
+
+  getSessionToken: function (req, res) {
+    return req.headers['Authorization'];
+  }
+};
+
+app.use(moesifExpress(options));
+/* MOESIF INIT - END */
 
 app.use("/", require("./router"));
 
