@@ -11,6 +11,7 @@ app.use(express.json());
 
 app.use("/", require("./router"));
 
+
 const server = require("http").createServer(app);
 const io = require("socket.io")(server, {
   pingTimeout: 30000,
@@ -27,10 +28,10 @@ io.on("connection", function (socket) {
   });
 });
 
+module.exports = server;
+
 Sentry.init({
   dsn: "https://743f20ee73d24d63a94eeb17263d7b2d@o471166.ingest.sentry.io/5504695",
 
   tracesSampleRate: 0.8,
 });
-
-module.exports = server;
